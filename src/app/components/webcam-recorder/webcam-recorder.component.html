@@ -1,0 +1,77 @@
+<div class="webcam-recorder-container">
+  <div class="main-video-column">
+    <div class="webcam-container">
+      <video #videoElement class="main-video"></video>
+
+      <div class="bandwidth-overlay" *ngIf="isMeasuringBandwidth">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p class="measuring-text">Measuring connection speed...</p>
+      </div>
+
+      <div class="controls">
+        <button class="settings-button" (click)="toggleSettings()">
+          <svg *ngIf="!(isSettingsOpen$ | async)" width="40" height="40" viewBox="0 0 40 40" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M23.6802 8.04998C24.4357 8.28331 25.1579 8.58331 25.8468 8.94998L28.9018 7.11665C29.2204 6.92558 29.5936 6.84641 29.9623 6.89171C30.331 6.937 30.674 7.10416 30.9368 7.36665L32.6335 9.06331C32.896 9.32615 33.0631 9.66914 33.1084 10.0378C33.1537 10.4065 33.0746 10.7798 32.8835 11.0983L31.0502 14.1533C31.4168 14.8422 31.7168 15.5644 31.9502 16.32L35.4052 17.185C35.7656 17.2753 36.0855 17.4834 36.3141 17.7763C36.5427 18.0692 36.6668 18.4301 36.6668 18.8016V21.1983C36.6668 21.5699 36.5427 21.9308 36.3141 22.2237C36.0855 22.5166 35.7656 22.7247 35.4052 22.815L31.9502 23.68C31.7168 24.4355 31.4168 25.1578 31.0502 25.8466L32.8835 28.9016C33.0746 29.2202 33.1537 29.5935 33.1084 29.9621C33.0631 30.3308 32.896 30.6738 32.6335 30.9366L30.9368 32.6333C30.674 32.8958 30.331 33.063 29.9623 33.1083C29.5936 33.1535 29.2204 33.0744 28.9018 32.8833L25.8468 31.05C25.1579 31.4166 24.4357 31.7166 23.6802 31.95L22.8152 35.405C22.7249 35.7654 22.5167 36.0853 22.2238 36.3139C21.9309 36.5425 21.57 36.6666 21.1985 36.6666H18.8018C18.4303 36.6666 18.0694 36.5425 17.7765 36.3139C17.4836 36.0853 17.2754 35.7654 17.1852 35.405L16.3202 31.95C15.5713 31.7186 14.8459 31.4172 14.1535 31.05L11.0985 32.8833C10.7799 33.0744 10.4067 33.1535 10.038 33.1083C9.66932 33.063 9.32633 32.8958 9.0635 32.6333L7.36683 30.9366C7.10434 30.6738 6.93718 30.3308 6.89189 29.9621C6.8466 29.5935 6.92577 29.2202 7.11683 28.9016L8.95016 25.8466C8.5829 25.1542 8.28157 24.4288 8.05016 23.68L4.59516 22.815C4.23503 22.7248 3.91533 22.5169 3.68677 22.2243C3.45821 21.9317 3.33388 21.5712 3.3335 21.2V18.8033C3.33351 18.4318 3.45767 18.0709 3.68626 17.778C3.91484 17.4851 4.23475 17.2769 4.59516 17.1866L8.05016 16.3216C8.2835 15.5661 8.5835 14.8439 8.95016 14.155L7.11683 11.1C6.92577 10.7814 6.8466 10.4082 6.89189 10.0395C6.93718 9.6708 7.10434 9.32781 7.36683 9.06498L9.0635 7.36665C9.32633 7.10416 9.66932 6.937 10.038 6.89171C10.4067 6.84641 10.7799 6.92558 11.0985 7.11665L14.1535 8.94998C14.8424 8.58331 15.5646 8.28331 16.3202 8.04998L17.1852 4.59498C17.2754 4.23485 17.4833 3.91514 17.7758 3.68658C18.0684 3.45802 18.4289 3.33369 18.8002 3.33331H21.1968C21.5684 3.33332 21.9293 3.45748 22.2222 3.68607C22.5151 3.91466 22.7232 4.23457 22.8135 4.59498L23.6802 8.04998ZM20.0002 26.6666C21.7683 26.6666 23.464 25.9643 24.7142 24.714C25.9645 23.4638 26.6668 21.7681 26.6668 20C26.6668 18.2319 25.9645 16.5362 24.7142 15.2859C23.464 14.0357 21.7683 13.3333 20.0002 13.3333C18.2321 13.3333 16.5364 14.0357 15.2861 15.2859C14.0359 16.5362 13.3335 18.2319 13.3335 20C13.3335 21.7681 14.0359 23.4638 15.2861 24.714C16.5364 25.9643 18.2321 26.6666 20.0002 26.6666Z"
+              fill="white" />
+          </svg>
+          <svg class="close-button" *ngIf="(isSettingsOpen$ | async)" width="26" height="26" viewBox="0 0 30 30"
+            fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 28L28 2M2 2L28 28" stroke="white" stroke-width="3" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div class="quality-menu" [class.open]="isSettingsOpen$ | async">
+          <div class="quality-option" *ngFor="let quality of qualities" (click)="selectQuality(quality.value)"
+            [class.selected]="quality.value === (currentQuality$ | async)">
+            <span class="quality-label">{{ quality.label }}</span>
+            <svg *ngIf="quality.value === (currentQuality$ | async)" width="18" height="14" viewBox="0 0 18 14"
+              fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M6.09961 13.166C6.45117 13.5176 7.04883 13.5176 7.40039 13.166L17.7363 2.83008C18.0879 2.47852 18.0879 1.88086 17.7363 1.5293L16.4707 0.263672C16.1191 -0.0878906 15.5566 -0.0878906 15.2051 0.263672L6.76758 8.70117L2.79492 4.76367C2.44336 4.41211 1.88086 4.41211 1.5293 4.76367L0.263672 6.0293C-0.0878906 6.38086 -0.0878906 6.97852 0.263672 7.33008L6.09961 13.166Z"
+                fill="#33AB30" />
+            </svg>
+          </div>
+        </div>
+
+        <button *ngIf="!(isRecording$ | async)" class="record-button" (click)="toggleRecording()">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="30" fill="white" />
+            <circle cx="30" cy="30" r="14" fill="#FF0000" />
+          </svg>
+        </button>
+
+        <div *ngIf="isRecording$ | async" class="recording-controls">
+          <button class="stop-button" (click)="toggleRecording()">
+            <svg width="61" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="30.25" cy="30" r="28.5" fill="white" stroke="#5061D0" stroke-width="3" />
+              <rect x="19.25" y="19" width="22" height="22" rx="4" fill="#5061D0" />
+            </svg>
+          </button>
+          <div class="recording-timer">
+            <span class="timer-text">{{ (recordingTime$ | async) ?? 0 }}s</span>
+            <div class="timer-progress">
+              <div class="progress-bar" [style.width.%]="((recordingTime$ | async) ?? 0) * 10"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="recorded-videos-column">
+    <div class="videos-list">
+      <div class="empty-state" *ngIf="!(hasRecordedVideos$ | async)">
+        <svg width="34" height="23" viewBox="0 0 34 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M5.33333 0.666656C4.11776 0.666656 2.95197 1.14954 2.09243 2.00908C1.23289 2.86863 0.75 4.03441 0.75 5.24999V17.75C0.75 18.9656 1.23289 20.1314 2.09243 20.9909C2.95197 21.8504 4.11776 22.3333 5.33333 22.3333H19.5C20.7156 22.3333 21.8814 21.8504 22.7409 20.9909C23.6004 20.1314 24.0833 18.9656 24.0833 17.75V15.0933L29.7817 20.1683C31.1233 21.3633 33.25 20.41 33.25 18.6117V3.77499C33.25 1.97499 31.1233 1.02332 29.7817 2.21832L24.0833 7.29332V5.24999C24.0833 4.03441 23.6004 2.86863 22.7409 2.00908C21.8814 1.14954 20.7156 0.666656 19.5 0.666656H5.33333Z"
+            fill="white" fill-opacity="0.8" />
+        </svg>
+        <p>There are no recorded videos yet</p>
+      </div>
+      <app-video-list *ngIf="hasRecordedVideos$ | async"></app-video-list>
+    </div>
+  </div>
+</div>
