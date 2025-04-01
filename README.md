@@ -83,16 +83,16 @@ Storage structure:
 ## Screenshots
 
 ### Initial Screen
-[Add screenshot of the initial screen with bandwidth measurement indicator]
+<img width="1063" alt="Снимок экрана 2025-04-01 в 11 13 08" src="https://github.com/user-attachments/assets/865f100d-3998-4fb0-a794-3c7fe05afc15" />
 
 ### Recording Screen
-[Add screenshot of the screen during video recording]
+<img width="1154" alt="Снимок экрана 2025-04-01 в 10 34 54" src="https://github.com/user-attachments/assets/e00d9f18-23ad-4e56-b546-f44b0f23c1d0" />
 
 ### Saved Videos List
-[Add screenshot of the saved videos list]
+<img width="1125" alt="Снимок экрана 2025-04-01 в 10 55 37" src="https://github.com/user-attachments/assets/2f75d061-afd2-40fe-8875-9a3504543f85" />
 
 ### Delete Dialog
-[Add screenshot of the delete confirmation dialog]
+<img width="1114" alt="Снимок экрана 2025-04-01 в 10 57 51" src="https://github.com/user-attachments/assets/b0b92bf9-faa0-40ab-8a17-ac0253452bf5" />
 
 ## Error Handling
 
