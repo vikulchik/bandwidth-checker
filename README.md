@@ -16,7 +16,7 @@ An application for checking internet bandwidth and recording webcam video with a
 
 1. Clone the repository:
 ```bash
-git clone [repository URL]
+git clone https://github.com/vikulchik/bandwidth-checker.git
 cd bandwidth-checker
 ```
 
