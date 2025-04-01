@@ -5,15 +5,13 @@ import { SavedVideo } from '../../models/video.model';
 export class SaveVideo {
   static readonly type = '[App] Save Video';
 
-  constructor(public video: SavedVideo) {
-  }
+  constructor(public video: SavedVideo) {}
 }
 
 export class DeleteVideo {
   static readonly type = '[App] Delete Video';
 
-  constructor(public id: string) {
-  }
+  constructor(public id: string) {}
 }
 
 export class LoadVideos {
@@ -28,16 +26,14 @@ export class ClearVideos {
 export class SetQuality {
   static readonly type = '[App] Set Quality';
 
-  constructor(public quality: VideoQuality) {
-  }
+  constructor(public quality: VideoQuality) {}
 }
 
 // Bandwidth Actions
 export class SetBandwidth {
   static readonly type = '[App] Set Bandwidth';
 
-  constructor(public bandwidth: number | null) {
-  }
+  constructor(public bandwidth: number | null) {}
 }
 
 // Recording Actions
@@ -52,8 +48,7 @@ export class StopRecording {
 export class UpdateRecordingTime {
   static readonly type = '[App] Update Recording Time';
 
-  constructor(public time: number) {
-  }
+  constructor(public time: number) {}
 }
 
 // Settings Actions

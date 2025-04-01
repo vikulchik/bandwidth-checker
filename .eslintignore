@@ -1,0 +1,19 @@
+# Artifacts
+dist/
+coverage/
+docs/
+tmp/
+
+# Dependencies
+node_modules/
+.angular/
+
+# Config
+karma.conf.js
+webpack.config.js
+*.config.js
+.eslintrc.js
+
+# Generated
+*.d.ts
+*.js.map 

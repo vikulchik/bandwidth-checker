@@ -20,15 +20,15 @@ describe('VideoListComponent', () => {
       blobData: new ArrayBuffer(8),
       timestamp: Date.now(),
       duration: 5,
-      quality: VideoQuality.HIGH
+      quality: VideoQuality.HIGH,
     },
     {
       id: '2',
       blobData: new ArrayBuffer(8),
       timestamp: Date.now() + 1000,
       duration: 10,
-      quality: VideoQuality.MEDIUM
-    }
+      quality: VideoQuality.MEDIUM,
+    },
   ];
 
   beforeEach(async () => {
@@ -36,12 +36,12 @@ describe('VideoListComponent', () => {
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     await TestBed.configureTestingModule({
-      declarations: [ VideoListComponent ],
+      declarations: [VideoListComponent],
       providers: [
         { provide: Store, useValue: storeSpy },
-        { provide: MatDialog, useValue: dialogSpy }
+        { provide: MatDialog, useValue: dialogSpy },
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     store = TestBed.inject(Store) as jasmine.SpyObj<Store>;
@@ -64,9 +64,9 @@ describe('VideoListComponent', () => {
     it('should play video when clicked', () => {
       const video = mockVideos[0];
       const playSpy = spyOn(HTMLVideoElement.prototype, 'play');
-      
+
       component.playVideo(video);
-      
+
       expect(playSpy).toHaveBeenCalled();
     });
 
@@ -84,12 +84,12 @@ describe('VideoListComponent', () => {
     it('should update time and progress on video time update', () => {
       const video = mockVideos[0];
       component.playVideo(video);
-      
+
       const mockEvent = {
         target: {
           currentTime: 2.5,
-          duration: 5
-        }
+          duration: 5,
+        },
       };
 
       component.onTimeUpdate(mockEvent as any);
@@ -145,22 +145,22 @@ describe('VideoListComponent', () => {
     it('should sort videos by timestamp in descending order', () => {
       const oldTimestamp = Date.now();
       const newTimestamp = Date.now() + 1000;
-      
+
       const unsortedVideos: SavedVideo[] = [
         {
           id: '1',
           blobData: new ArrayBuffer(8),
           timestamp: oldTimestamp,
           duration: 5,
-          quality: VideoQuality.HIGH
+          quality: VideoQuality.HIGH,
         },
         {
           id: '2',
           blobData: new ArrayBuffer(8),
           timestamp: newTimestamp,
           duration: 10,
-          quality: VideoQuality.MEDIUM
-        }
+          quality: VideoQuality.MEDIUM,
+        },
       ];
 
       store.select.and.returnValue(of(unsortedVideos));
@@ -180,7 +180,7 @@ describe('VideoListComponent', () => {
     it('should create and cache video URLs', () => {
       const video = mockVideos[0];
       const url = component.getVideoUrl(video);
-      
+
       expect(url).toContain('blob:');
       expect(component.getVideoUrl(video)).toBe(url);
     });
@@ -188,10 +188,10 @@ describe('VideoListComponent', () => {
     it('should cleanup video URLs on component destroy', () => {
       const video = mockVideos[0];
       const url = component.getVideoUrl(video);
-      
+
       spyOn(URL, 'revokeObjectURL');
       component.ngOnDestroy();
-      
+
       expect(URL.revokeObjectURL).toHaveBeenCalledWith(url);
     });
   });

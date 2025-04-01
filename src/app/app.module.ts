@@ -26,13 +26,13 @@ import { MatDialogModule } from '@angular/material/dialog';
     VideoListComponent,
     DeleteDialogComponent,
     DurationPipe,
-    TimePipe
+    TimePipe,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgxsModule.forRoot([AppState], {
-      developmentMode: true
+      developmentMode: true,
     }),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     BrowserAnimationsModule,
@@ -40,9 +40,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

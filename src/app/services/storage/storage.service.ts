@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SavedVideo } from '../../models/video.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StorageService {
   private readonly DB_NAME = 'BandwidthCheckerDB';

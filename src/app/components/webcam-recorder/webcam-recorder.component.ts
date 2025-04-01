@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BandwidthService } from '../../services/bandwidth/bandwidth.service';
 import { Store, Select } from '@ngxs/store';
 import { AppState } from '../../store/state/app.state';
-import { Observable, catchError, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   SetQuality,
   SetBandwidth,
@@ -14,14 +14,14 @@ import {
   ToggleSettings,
   SaveVideo,
   LoadVideos,
-  ResetRecordingTime
+  ResetRecordingTime,
 } from '../../store/actions/app.actions';
 import { SavedVideo } from '../../models/video.model';
 
 @Component({
   selector: 'app-webcam-recorder',
   templateUrl: './webcam-recorder.component.html',
-  styleUrls: ['./webcam-recorder.component.scss']
+  styleUrls: ['./webcam-recorder.component.scss'],
 })
 export class WebcamRecorderComponent implements OnInit, OnDestroy {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
@@ -45,14 +45,14 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   qualities = [
     { label: { number: '360p', text: '(Low Quality)' }, value: VideoQuality.LOW },
     { label: { number: '720p', text: '(Medium Quality)' }, value: VideoQuality.MEDIUM },
-    { label: { number: '1080p', text: '(High Quality)' }, value: VideoQuality.HIGH }
+    { label: { number: '1080p', text: '(High Quality)' }, value: VideoQuality.HIGH },
   ];
 
   constructor(
     private snackBar: MatSnackBar,
     private bandwidthService: BandwidthService,
     private store: Store
-  ) { }
+  ) {}
 
   async ngOnInit() {
     await this.initializeWithErrorHandling();
@@ -93,7 +93,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
 
       await Promise.all([
         this.store.dispatch(new SetBandwidth(bandwidth)),
-        this.store.dispatch(new SetQuality(quality))
+        this.store.dispatch(new SetQuality(quality)),
       ]);
 
       this.showBandwidthMessage(bandwidth, quality);
@@ -154,7 +154,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
     const qualityMap = {
       [VideoQuality.LOW]: 'low',
       [VideoQuality.MEDIUM]: 'medium',
-      [VideoQuality.HIGH]: 'high'
+      [VideoQuality.HIGH]: 'high',
     };
 
     const message = `Measured speed: ${bandwidth.toFixed(1)} Mbps.
@@ -164,7 +164,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: ['success-snackbar']
+      panelClass: ['success-snackbar'],
     });
   }
 
@@ -173,7 +173,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       duration: 7000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: ['error-snackbar']
+      panelClass: ['error-snackbar'],
     });
   }
 
@@ -182,7 +182,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: ['warning-snackbar']
+      panelClass: ['warning-snackbar'],
     });
   }
 
@@ -207,11 +207,12 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
       // Search for built-in camera by keywords in the name
-      const builtInCamera = videoDevices.find(device =>
-        device.label.toLowerCase().includes('built-in') ||
-        device.label.toLowerCase().includes('facetime') ||
-        device.label.toLowerCase().includes('integrated') ||
-        !device.label.toLowerCase().includes('obs')
+      const builtInCamera = videoDevices.find(
+        device =>
+          device.label.toLowerCase().includes('built-in') ||
+          device.label.toLowerCase().includes('facetime') ||
+          device.label.toLowerCase().includes('integrated') ||
+          !device.label.toLowerCase().includes('obs')
       );
 
       // If built-in camera found - use it, otherwise use the first available one
@@ -239,13 +240,13 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
 
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         video: constraints,
-        audio: true
+        audio: true,
       });
 
       // Initialize MediaRecorder with the stream
       try {
         const options = {
-          mimeType: 'video/webm;codecs=vp9'
+          mimeType: 'video/webm;codecs=vp9',
         };
         this.mediaRecorder = new MediaRecorder(this.mediaStream, options);
         console.log('MediaRecorder initialized successfully');
@@ -275,7 +276,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   private getVideoConstraints(): MediaTrackConstraints {
     const constraints: MediaTrackConstraints = {
       // Force use of the front camera
-      facingMode: 'user'
+      facingMode: 'user',
     };
 
     switch (this.store.selectSnapshot(AppState.currentQuality)) {
@@ -315,13 +316,14 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
         this.startTimer();
 
         this.chunks = [];
-        this.mediaRecorder.ondataavailable = (event) => {
+        this.mediaRecorder.ondataavailable = event => {
           if (event.data.size > 0) {
             this.chunks.push(event.data);
           }
         };
 
-        this.mediaRecorder.start(1000); // Get data every second
+        // Get data every second
+        this.mediaRecorder.start(1000);
         console.log('Started recording');
       } else {
         this.showError('MediaRecorder not initialized properly');
@@ -346,7 +348,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
             blobData: arrayBuffer,
             timestamp: Date.now(),
             duration: finalRecordingTime,
-            quality: currentQuality
+            quality: currentQuality,
           };
 
           console.log('Saving video with duration:', finalRecordingTime);
@@ -425,7 +427,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
         blobData: arrayBuffer,
         timestamp: Date.now(),
         duration: this.store.selectSnapshot(AppState.recordingTime),
-        quality: this.store.selectSnapshot(state => state.app.quality) as VideoQuality
+        quality: this.store.selectSnapshot(state => state.app.quality) as VideoQuality,
       };
 
       this.store.dispatch(new SaveVideo(video));

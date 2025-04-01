@@ -10,7 +10,7 @@ import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component'
 @Component({
   selector: 'app-video-list',
   templateUrl: './video-list.component.html',
-  styleUrls: ['./video-list.component.scss']
+  styleUrls: ['./video-list.component.scss'],
 })
 export class VideoListComponent implements OnDestroy {
   @Select(AppState.videos) videos$!: Observable<SavedVideo[]>;
@@ -60,7 +60,7 @@ export class VideoListComponent implements OnDestroy {
   async deleteVideo(videoId: string): Promise<void> {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
       width: '400px',
-      panelClass: 'delete-dialog-container'
+      panelClass: 'delete-dialog-container',
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -95,7 +95,7 @@ export class VideoListComponent implements OnDestroy {
   onTimeUpdate(event: Event) {
     const video = event.target as HTMLVideoElement;
     this.currentTime = Math.floor(video.currentTime);
-    
+
     if (this.duration > 0 && isFinite(this.duration)) {
       let calculated = (video.currentTime / this.duration) * 100;
       // Limit progress value between 0 and 100

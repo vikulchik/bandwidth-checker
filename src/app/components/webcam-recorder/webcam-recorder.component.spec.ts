@@ -15,18 +15,21 @@ describe('WebcamRecorderComponent', () => {
   let snackBar: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(async () => {
-    const bandwidthServiceSpy = jasmine.createSpyObj('BandwidthService', ['measureBandwidth', 'getRecommendedQuality']);
+    const bandwidthServiceSpy = jasmine.createSpyObj('BandwidthService', [
+      'measureBandwidth',
+      'getRecommendedQuality',
+    ]);
     const storeSpy = jasmine.createSpyObj('Store', ['dispatch', 'select']);
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
-      declarations: [ WebcamRecorderComponent ],
+      declarations: [WebcamRecorderComponent],
       providers: [
         { provide: BandwidthService, useValue: bandwidthServiceSpy },
         { provide: Store, useValue: storeSpy },
-        { provide: MatSnackBar, useValue: snackBarSpy }
+        { provide: MatSnackBar, useValue: snackBarSpy },
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     bandwidthService = TestBed.inject(BandwidthService) as jasmine.SpyObj<BandwidthService>;
@@ -73,11 +76,7 @@ describe('WebcamRecorderComponent', () => {
       component.ngOnInit();
       tick();
 
-      expect(snackBar.open).toHaveBeenCalledWith(
-        jasmine.any(String),
-        'Close',
-        jasmine.any(Object)
-      );
+      expect(snackBar.open).toHaveBeenCalledWith(jasmine.any(String), 'Close', jasmine.any(Object));
     }));
   });
 
@@ -91,7 +90,7 @@ describe('WebcamRecorderComponent', () => {
         start: jasmine.createSpy('start'),
         stop: jasmine.createSpy('stop'),
         ondataavailable: null,
-        state: 'inactive'
+        state: 'inactive',
       };
 
       spyOn(window.navigator.mediaDevices, 'getUserMedia').and.returnValue(

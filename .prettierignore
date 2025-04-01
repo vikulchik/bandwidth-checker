@@ -1,0 +1,27 @@
+# Artifacts
+dist/
+coverage/
+docs/
+tmp/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/Node
+node_modules/
+.angular/
+.vscode/
+.idea/
+*.sublime-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Misc
+yarn-error.log
+npm-debug.log
+package-lock.json 

@@ -1,13 +1,18 @@
 {
   "name": "bandwidth-checker",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "gh-pages -d dist/bandwidth-checker"
+    "deploy": "gh-pages -d dist/bandwidth-checker",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -32,13 +37,31 @@
     "@angular/cli": "~15.2.11",
     "@angular/compiler-cli": "^15.2.0",
     "@types/jasmine": "~4.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.5",
     "gh-pages": "^6.3.0",
+    "husky": "^8.0.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
     "typescript": "~4.9.4"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{html,scss}": [
+      "prettier --write"
+    ]
   }
 }

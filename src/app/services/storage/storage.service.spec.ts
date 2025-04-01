@@ -13,7 +13,7 @@ describe('StorageService', () => {
     blobData: new ArrayBuffer(8),
     timestamp: Date.now(),
     duration: 5,
-    quality: VideoQuality.HIGH
+    quality: VideoQuality.HIGH,
   };
 
   beforeEach(() => {
@@ -21,29 +21,29 @@ describe('StorageService', () => {
 
     mockDB = {
       objectStoreNames: {
-        contains: jasmine.createSpy('contains').and.returnValue(true)
+        contains: jasmine.createSpy('contains').and.returnValue(true),
       },
       createObjectStore: jasmine.createSpy('createObjectStore'),
       transaction: jasmine.createSpy('transaction').and.returnValue({
         objectStore: () => ({
           add: jasmine.createSpy('add').and.returnValue({
             onsuccess: null,
-            onerror: null
+            onerror: null,
           }),
           put: jasmine.createSpy('put').and.returnValue({
             onsuccess: null,
-            onerror: null
+            onerror: null,
           }),
           delete: jasmine.createSpy('delete').and.returnValue({
             onsuccess: null,
-            onerror: null
+            onerror: null,
           }),
           getAll: jasmine.createSpy('getAll').and.returnValue({
             onsuccess: null,
-            onerror: null
-          })
-        })
-      })
+            onerror: null,
+          }),
+        }),
+      }),
     };
 
     (window as any).indexedDB = {
@@ -51,16 +51,16 @@ describe('StorageService', () => {
         result: null,
         error: null,
         onerror: null,
-        onsuccess: function(this: any) {
+        onsuccess: function (this: any) {
           this.result = mockDB;
           if (this.onsuccess) this.onsuccess(new Event('success'));
         },
-        onupgradeneeded: null
-      })
+        onupgradeneeded: null,
+      }),
     };
 
     TestBed.configureTestingModule({
-      providers: [StorageService]
+      providers: [StorageService],
     });
 
     service = TestBed.inject(StorageService);
@@ -75,7 +75,7 @@ describe('StorageService', () => {
   });
 
   describe('initialization', () => {
-    it('should initialize IndexedDB on creation', (done) => {
+    it('should initialize IndexedDB on creation', done => {
       service['initDB']().then(() => {
         expect(window.indexedDB.open).toHaveBeenCalledWith(
           'BandwidthCheckerDB',
@@ -99,7 +99,7 @@ describe('StorageService', () => {
   });
 
   describe('video operations', () => {
-    beforeEach((done) => {
+    beforeEach(done => {
       service['initDB']().then(done);
     });
 

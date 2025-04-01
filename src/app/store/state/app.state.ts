@@ -13,7 +13,7 @@ import {
   SaveVideo,
   DeleteVideo,
   LoadVideos,
-  ResetRecordingTime
+  ResetRecordingTime,
 } from '../actions/app.actions';
 import { StorageService } from '../../services/storage/storage.service';
 
@@ -23,12 +23,12 @@ const defaults: AppStateModel = {
   bandwidth: null,
   isRecording: false,
   isSettingsOpen: false,
-  recordingTime: 0
+  recordingTime: 0,
 };
 
 @State<AppStateModel>({
   name: 'app',
-  defaults
+  defaults,
 })
 @Injectable()
 export class AppState {
@@ -83,7 +83,7 @@ export class AppState {
   startRecording(ctx: StateContext<AppStateModel>) {
     ctx.patchState({
       isRecording: true,
-      recordingTime: 0
+      recordingTime: 0,
     });
   }
 
@@ -91,7 +91,7 @@ export class AppState {
   stopRecording(ctx: StateContext<AppStateModel>) {
     ctx.patchState({
       isRecording: false,
-      recordingTime: 0
+      recordingTime: 0,
     });
   }
 
@@ -112,7 +112,7 @@ export class AppState {
       await this.storageService.saveVideo(action.video);
       const state = ctx.getState();
       ctx.patchState({
-        videos: [...state.videos, action.video]
+        videos: [...state.videos, action.video],
       });
     } catch (error) {
       console.error('Error saving video:', error);
@@ -126,7 +126,7 @@ export class AppState {
       await this.storageService.deleteVideo(action.id);
       const state = ctx.getState();
       ctx.patchState({
-        videos: state.videos.filter(video => video.id !== action.id)
+        videos: state.videos.filter(video => video.id !== action.id),
       });
     } catch (error) {
       console.error('Error deleting video:', error);

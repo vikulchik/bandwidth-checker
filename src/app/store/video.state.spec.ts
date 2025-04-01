@@ -5,71 +5,71 @@ import { SaveVideo, DeleteVideo, PlayVideo, CloseVideo, SetVideoQuality } from '
 import { SavedVideo, VideoQuality } from '../models/video.model';
 
 describe('VideoState', () => {
-    let store: Store;
+  let store: Store;
 
-    const mockVideo: SavedVideo = {
-        id: '1',
-        blobData: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]).buffer,
-        timestamp: Date.now(),
-        duration: 5,
-        quality: VideoQuality.HIGH
-    };
+  const mockVideo: SavedVideo = {
+    id: '1',
+    blobData: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]).buffer,
+    timestamp: Date.now(),
+    duration: 5,
+    quality: VideoQuality.HIGH,
+  };
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [NgxsModule.forRoot([VideoState])]
-        });
-
-        store = TestBed.inject(Store);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [NgxsModule.forRoot([VideoState])],
     });
 
-    it('should save video', () => {
-        store.dispatch(new SaveVideo(mockVideo));
+    store = TestBed.inject(Store);
+  });
 
-        const videos = store.selectSnapshot(VideoState.getVideos);
-        expect(videos).toEqual([mockVideo]);
-    });
+  it('should save video', () => {
+    store.dispatch(new SaveVideo(mockVideo));
 
-    it('should delete video', () => {
-        store.dispatch(new SaveVideo(mockVideo));
-        store.dispatch(new DeleteVideo(mockVideo.id));
+    const videos = store.selectSnapshot(VideoState.getVideos);
+    expect(videos).toEqual([mockVideo]);
+  });
 
-        const videos = store.selectSnapshot(VideoState.getVideos);
-        expect(videos).toEqual([]);
-    });
+  it('should delete video', () => {
+    store.dispatch(new SaveVideo(mockVideo));
+    store.dispatch(new DeleteVideo(mockVideo.id));
 
-    it('should play video', () => {
-        store.dispatch(new SaveVideo(mockVideo));
-        store.dispatch(new PlayVideo(mockVideo.id));
+    const videos = store.selectSnapshot(VideoState.getVideos);
+    expect(videos).toEqual([]);
+  });
 
-        const selectedVideo = store.selectSnapshot(VideoState.getSelectedVideo);
-        expect(selectedVideo).toEqual(mockVideo);
-    });
+  it('should play video', () => {
+    store.dispatch(new SaveVideo(mockVideo));
+    store.dispatch(new PlayVideo(mockVideo.id));
 
-    it('should close video', () => {
-        store.dispatch(new SaveVideo(mockVideo));
-        store.dispatch(new PlayVideo(mockVideo.id));
-        store.dispatch(new CloseVideo());
+    const selectedVideo = store.selectSnapshot(VideoState.getSelectedVideo);
+    expect(selectedVideo).toEqual(mockVideo);
+  });
 
-        const selectedVideo = store.selectSnapshot(VideoState.getSelectedVideo);
-        expect(selectedVideo).toBeNull();
-    });
+  it('should close video', () => {
+    store.dispatch(new SaveVideo(mockVideo));
+    store.dispatch(new PlayVideo(mockVideo.id));
+    store.dispatch(new CloseVideo());
 
-    it('should set video quality', () => {
-        store.dispatch(new SetVideoQuality(VideoQuality.LOW));
+    const selectedVideo = store.selectSnapshot(VideoState.getSelectedVideo);
+    expect(selectedVideo).toBeNull();
+  });
 
-        const quality = store.selectSnapshot(VideoState.getQuality);
-        expect(quality).toBe(VideoQuality.LOW);
-    });
+  it('should set video quality', () => {
+    store.dispatch(new SetVideoQuality(VideoQuality.LOW));
 
-    it('should persist videos between sessions', () => {
-        store.dispatch(new SaveVideo(mockVideo));
+    const quality = store.selectSnapshot(VideoState.getQuality);
+    expect(quality).toBe(VideoQuality.LOW);
+  });
 
-        // Simulate page reload
-        const state = store.snapshot();
-        store.reset(state);
+  it('should persist videos between sessions', () => {
+    store.dispatch(new SaveVideo(mockVideo));
 
-        const videos = store.selectSnapshot(VideoState.getVideos);
-        expect(videos).toEqual([mockVideo]);
-    });
-}); 
+    // Simulate page reload
+    const state = store.snapshot();
+    store.reset(state);
+
+    const videos = store.selectSnapshot(VideoState.getVideos);
+    expect(videos).toEqual([mockVideo]);
+  });
+});

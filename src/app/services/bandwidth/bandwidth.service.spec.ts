@@ -13,10 +13,7 @@ describe('BandwidthService', () => {
     const storeSpy = jasmine.createSpyObj('Store', ['dispatch']);
 
     TestBed.configureTestingModule({
-      providers: [
-        BandwidthService,
-        { provide: Store, useValue: storeSpy }
-      ]
+      providers: [BandwidthService, { provide: Store, useValue: storeSpy }],
     });
 
     service = TestBed.inject(BandwidthService);
