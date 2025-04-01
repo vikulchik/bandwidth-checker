@@ -8,7 +8,7 @@
   </div>
 
   <div class="video-item" *ngFor="let video of videos$ | async">
-    <video [src]="getVideoUrl(video)" preload="metadata" (click)="playVideo(video)"></video>
+    <video [src]="getVideoUrl(video)" preload="metadata" (loadedmetadata)="onVideoItemLoaded(video)" (click)="playVideo(video)"></video>
     <div class="video-info">
       <div class="video-date">{{ video.timestamp | date:'dd.MM.yyyy HH:mm' }}</div>
       <div class="video-duration">{{ video.duration | duration }}</div>
@@ -25,7 +25,7 @@
 
 <div class="video-player-overlay" *ngIf="selectedVideo">
   <div class="video-player-container">
-    <video #videoPlayer [src]="selectedVideo.url" preload="metadata" (timeupdate)="onTimeUpdate($event)" (ended)="onVideoEnded()"></video>
+    <video #videoPlayer [src]="selectedVideo.url" preload="metadata" (loadedmetadata)="onVideoLoaded()" (timeupdate)="onTimeUpdate($event)" (ended)="onVideoEnded()"></video>
     <div class="video-controls">
       <button class="play-pause-button" (click)="togglePlay()">
         <svg *ngIf="!isPlaying" viewBox="0 0 24 24">

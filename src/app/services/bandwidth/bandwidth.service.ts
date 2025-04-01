@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { VideoQuality } from '../models/quality.model';
+import { VideoQuality } from '../../models/quality.model';
 
 @Injectable({
   providedIn: 'root'

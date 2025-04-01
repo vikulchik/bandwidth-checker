@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { BandwidthService } from './bandwidth.service';
 import { Store } from '@ngxs/store';
-import { VideoQuality } from '../models/quality.model';
-import { SetVideoQuality } from '../store/video.actions';
+import { VideoQuality } from '../../models/quality.model';
+import { SetVideoQuality } from '../../store/video.actions';
 
 describe('BandwidthService', () => {
   let service: BandwidthService;
@@ -85,14 +85,14 @@ describe('BandwidthService', () => {
     it('should throw error for failed measurement', async () => {
       // Mock fetch to simulate failure
       spyOn(window, 'fetch').and.returnValue(Promise.reject('Network error'));
-      
+
       await expectAsync(service.measureBandwidth()).toBeRejected();
     });
 
     it('should calculate bandwidth correctly based on file size and download time', async () => {
       const mockResponse = new Response(new ArrayBuffer(1000000)); // 1MB file
       spyOn(window, 'fetch').and.returnValue(Promise.resolve(mockResponse));
-      
+
       // Mock performance.now() to simulate 1 second download time
       const originalNow = performance.now;
       let callCount = 0;

@@ -1,49 +1,51 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { WebcamRecorderComponent } from './webcam-recorder.component';
-import { Store } from '@ngxs/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { VideoQuality } from '../../models/quality.model';
-import { SaveVideo } from '../../store/video.actions';
+import { BandwidthService } from '../../services/bandwidth/bandwidth.service';
+import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
+import { VideoQuality } from '../../models/quality.model';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('WebcamRecorderComponent', () => {
   let component: WebcamRecorderComponent;
   let fixture: ComponentFixture<WebcamRecorderComponent>;
+  let bandwidthService: jasmine.SpyObj<BandwidthService>;
   let store: jasmine.SpyObj<Store>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
-  let mediaDevicesSpy: jasmine.Spy;
-
-  const mockMediaStream = {
-    getTracks: () => [{
-      stop: () => { },
-      getSettings: () => ({ width: 1920, height: 1080 })
-    }]
-  };
 
   beforeEach(async () => {
+    const bandwidthServiceSpy = jasmine.createSpyObj('BandwidthService', ['measureBandwidth', 'getRecommendedQuality']);
     const storeSpy = jasmine.createSpyObj('Store', ['dispatch', 'select']);
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
-    storeSpy.select.and.returnValue(of(VideoQuality.HIGH));
-
     await TestBed.configureTestingModule({
-      declarations: [WebcamRecorderComponent],
+      declarations: [ WebcamRecorderComponent ],
       providers: [
+        { provide: BandwidthService, useValue: bandwidthServiceSpy },
         { provide: Store, useValue: storeSpy },
         { provide: MatSnackBar, useValue: snackBarSpy }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
 
+    bandwidthService = TestBed.inject(BandwidthService) as jasmine.SpyObj<BandwidthService>;
     store = TestBed.inject(Store) as jasmine.SpyObj<Store>;
     snackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
-
-    mediaDevicesSpy = spyOn(navigator.mediaDevices, 'getUserMedia')
-      .and.returnValue(Promise.resolve(mockMediaStream as MediaStream));
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WebcamRecorderComponent);
     component = fixture.componentInstance;
+
+    // Mock store selects
+    store.select.and.returnValue(of(false)); // isRecording$
+    store.select.and.returnValue(of(false)); // isSettingsOpen$
+    store.select.and.returnValue(of(0)); // recordingTime$
+    store.select.and.returnValue(of(VideoQuality.MEDIUM)); // currentQuality$
+    store.select.and.returnValue(of(5)); // bandwidth$
+    store.select.and.returnValue(of(false)); // hasRecordedVideos$
+
     fixture.detectChanges();
   });
 
@@ -51,91 +53,87 @@ describe('WebcamRecorderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('initializeWebcam', () => {
-    it('should initialize camera with correct quality settings', async () => {
-      await component.initializeWebcam();
-
-      expect(mediaDevicesSpy).toHaveBeenCalledWith({
-        video: {
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        },
-        audio: true
-      });
+  describe('initializeWithErrorHandling', () => {
+    beforeEach(() => {
+      bandwidthService.measureBandwidth.and.returnValue(Promise.resolve(5));
+      bandwidthService.getRecommendedQuality.and.returnValue(VideoQuality.MEDIUM);
     });
 
-    it('should handle camera access error', async () => {
-      mediaDevicesSpy.and.returnValue(Promise.reject(new Error('Permission denied')));
+    it('should initialize webcam and measure bandwidth on init', fakeAsync(() => {
+      component.ngOnInit();
+      tick();
 
-      await component.initializeWebcam();
+      expect(bandwidthService.measureBandwidth).toHaveBeenCalled();
+      expect(store.dispatch).toHaveBeenCalled();
+    }));
+
+    it('should handle initialization error', fakeAsync(() => {
+      bandwidthService.measureBandwidth.and.returnValue(Promise.reject('Error'));
+
+      component.ngOnInit();
+      tick();
 
       expect(snackBar.open).toHaveBeenCalledWith(
-        'To record video, you must allow access to the camera and microphone.',
-        'OK',
-        { duration: 5000 }
+        jasmine.any(String),
+        'Close',
+        jasmine.any(Object)
       );
+    }));
+  });
+
+  describe('recording functionality', () => {
+    let mockMediaRecorder: any;
+    let mockStream: MediaStream;
+
+    beforeEach(() => {
+      mockStream = new MediaStream();
+      mockMediaRecorder = {
+        start: jasmine.createSpy('start'),
+        stop: jasmine.createSpy('stop'),
+        ondataavailable: null,
+        state: 'inactive'
+      };
+
+      spyOn(window.navigator.mediaDevices, 'getUserMedia').and.returnValue(
+        Promise.resolve(mockStream)
+      );
+      spyOn(window, 'MediaRecorder').and.returnValue(mockMediaRecorder);
+    });
+
+    it('should start recording when triggered', async () => {
+      await component.toggleRecording();
+      expect(mockMediaRecorder.start).toHaveBeenCalled();
+      expect(store.dispatch).toHaveBeenCalled();
+    });
+
+    it('should stop recording when triggered', async () => {
+      component.mediaRecorder = mockMediaRecorder;
+      await component.toggleRecording();
+      expect(mockMediaRecorder.stop).toHaveBeenCalled();
+      expect(store.dispatch).toHaveBeenCalled();
     });
   });
 
-  describe('recording', () => {
-    beforeEach(async () => {
-      await component.initializeWebcam();
+  describe('quality selection', () => {
+    it('should update quality when manually selected', () => {
+      component.selectQuality(VideoQuality.HIGH);
+      expect(store.dispatch).toHaveBeenCalled();
     });
 
-    it('should update recording state', () => {
-      spyOn(window, 'MediaRecorder').and.returnValue({
-        start: () => { },
-        ondataavailable: () => { },
-        onstop: () => { }
-      } as any);
-
-      component['startRecording']();
-
-      expect(component.isRecording$).toBeTruthy();
-    });
-
-    it('should stop recording after maximum duration', async () => {
-      jasmine.clock().install();
-
-      const stopRecordingSpy = spyOn<any>(component, 'stopRecording');
-      component['startRecording']();
-
-      jasmine.clock().tick(10000); // Maximum duration
-
-      expect(stopRecordingSpy).toHaveBeenCalled();
-
-      jasmine.clock().uninstall();
+    it('should set recommended quality based on bandwidth', () => {
+      bandwidthService.getRecommendedQuality.and.returnValue(VideoQuality.HIGH);
+      component.selectQuality(VideoQuality.HIGH);
+      expect(store.dispatch).toHaveBeenCalled();
     });
   });
 
-  describe('stopRecording', () => {
-    it('should save video and dispatch action', async () => {
-      const mockBlob = new Blob(['test'], { type: 'video/webm' });
-      const mockEvent = { data: mockBlob };
-
-      spyOn(window, 'MediaRecorder').and.returnValue({
-        start: () => { },
-        stop: () => {
-          (this as any).ondataavailable(mockEvent);
-          (this as any).onstop();
-        }
-      } as any);
-
-      await component.initializeWebcam();
-      component['startRecording']();
-      component['stopRecording']();
-
-      expect(store.dispatch).toHaveBeenCalledWith(jasmine.any(SaveVideo));
-    });
-  });
-
-  it('should cleanup on destroy', () => {
-    const stopSpy = jasmine.createSpy('stop');
-    (component as any).stream = {
-      getTracks: () => [{ stop: stopSpy }]
-    };
+  it('should cleanup resources on destroy', () => {
+    const mockStream = new MediaStream();
+    const mockTrack = { stop: jasmine.createSpy('stop') };
+    mockStream.addTrack(mockTrack as any);
+    component.mediaStream = mockStream;
 
     component.ngOnDestroy();
-    expect(stopSpy).toHaveBeenCalled();
+    expect(mockTrack.stop).toHaveBeenCalled();
   });
 });

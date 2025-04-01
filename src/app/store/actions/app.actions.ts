@@ -1,32 +1,32 @@
 import { VideoQuality } from '../../models/quality.model';
-import { SavedVideo } from '../models/app.model';
+import { SavedVideo } from '../../models/video.model';
 
 // Video Actions
 export class SaveVideo {
-  static readonly type = '[Video] Save Video';
+  static readonly type = '[App] Save Video';
 
   constructor(public video: SavedVideo) {
   }
 }
 
 export class DeleteVideo {
-  static readonly type = '[Video] Delete Video';
+  static readonly type = '[App] Delete Video';
 
   constructor(public id: string) {
   }
 }
 
 export class LoadVideos {
-  static readonly type = '[Video] Load Videos';
+  static readonly type = '[App] Load Videos';
 }
 
 export class ClearVideos {
-  static readonly type = '[Video] Clear Videos';
+  static readonly type = '[App] Clear Videos';
 }
 
 // Quality Actions
 export class SetQuality {
-  static readonly type = '[Quality] Set Quality';
+  static readonly type = '[App] Set Quality';
 
   constructor(public quality: VideoQuality) {
   }
@@ -42,15 +42,15 @@ export class SetBandwidth {
 
 // Recording Actions
 export class StartRecording {
-  static readonly type = '[Recording] Start Recording';
+  static readonly type = '[App] Start Recording';
 }
 
 export class StopRecording {
-  static readonly type = '[Recording] Stop Recording';
+  static readonly type = '[App] Stop Recording';
 }
 
 export class UpdateRecordingTime {
-  static readonly type = '[Recording] Update Time';
+  static readonly type = '[App] Update Recording Time';
 
   constructor(public time: number) {
   }
@@ -58,7 +58,7 @@ export class UpdateRecordingTime {
 
 // Settings Actions
 export class ToggleSettings {
-  static readonly type = '[Settings] Toggle Settings';
+  static readonly type = '[App] Toggle Settings';
 }
 
 export class ResetRecordingTime {

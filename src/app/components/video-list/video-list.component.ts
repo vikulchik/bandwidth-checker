@@ -3,7 +3,7 @@ import { Store, Select } from '@ngxs/store';
 import { AppState } from '../../store/state/app.state';
 import { Observable } from 'rxjs';
 import { DeleteVideo } from '../../store/actions/app.actions';
-import { SavedVideo } from '../../store/models/app.model';
+import { SavedVideo } from '../../models/video.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 
@@ -98,7 +98,7 @@ export class VideoListComponent implements OnDestroy {
     
     if (this.duration > 0 && isFinite(this.duration)) {
       let calculated = (video.currentTime / this.duration) * 100;
-      // Ограничиваем значение прогресса между 0 и 100
+      // Limit progress value between 0 and 100
       this.progress = Math.min(100, Math.max(0, calculated));
     }
   }
@@ -126,9 +126,24 @@ export class VideoListComponent implements OnDestroy {
   }
 
   onVideoEnded() {
-    // Когда видео закончилось, обновляем состояние на "не воспроизводится"
+    // When video ends, update state to "not playing"
     this.isPlaying = false;
     console.log('Video playback ended');
+  }
+
+  onVideoItemLoaded(video: SavedVideo): void {
+    console.log(`Video ${video.id} metadata loaded`);
+  }
+
+  onVideoLoaded() {
+    console.log('Video player metadata loaded');
+    if (!this.duration && this.videoPlayer) {
+      const videoDuration = this.videoPlayer.nativeElement.duration;
+      if (isFinite(videoDuration) && !isNaN(videoDuration)) {
+        this.duration = Math.floor(videoDuration);
+        console.log('Updated duration from video element:', this.duration);
+      }
+    }
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { VideoQuality } from '../../models/quality.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BandwidthService } from '../../services/bandwidth.service';
+import { BandwidthService } from '../../services/bandwidth/bandwidth.service';
 import { Store, Select } from '@ngxs/store';
 import { AppState } from '../../store/state/app.state';
 import { Observable, catchError, from } from 'rxjs';

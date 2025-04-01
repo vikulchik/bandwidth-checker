@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { VideoQuality } from '../../models/quality.model';
-import { AppStateModel, SavedVideo } from '../models/app.model';
+import { SavedVideo } from '../../models/video.model';
+import { AppStateModel } from '../models/app.model';
 import {
-  SaveVideo,
-  DeleteVideo,
-  LoadVideos,
-  ClearVideos,
   SetQuality,
   SetBandwidth,
   StartRecording,
   StopRecording,
   UpdateRecordingTime,
   ToggleSettings,
+  SaveVideo,
+  DeleteVideo,
+  LoadVideos,
   ResetRecordingTime
 } from '../actions/app.actions';
-import { StorageService } from '../../services/storage.service';
+import { StorageService } from '../../services/storage/storage.service';
 
 const defaults: AppStateModel = {
   videos: [],
@@ -32,17 +32,11 @@ const defaults: AppStateModel = {
 })
 @Injectable()
 export class AppState {
-  constructor(private storageService: StorageService) {
-  }
+  constructor(private storageService: StorageService) {}
 
   @Selector()
   static videos(state: AppStateModel): SavedVideo[] {
     return state.videos;
-  }
-
-  @Selector()
-  static hasRecordedVideos(state: AppStateModel): boolean {
-    return state.videos.length > 0;
   }
 
   @Selector()
@@ -61,63 +55,18 @@ export class AppState {
   }
 
   @Selector()
+  static isSettingsOpen(state: AppStateModel): boolean {
+    return state.isSettingsOpen;
+  }
+
+  @Selector()
   static recordingTime(state: AppStateModel): number {
     return state.recordingTime;
   }
 
   @Selector()
-  static isSettingsOpen(state: AppStateModel): boolean {
-    return state.isSettingsOpen;
-  }
-
-  @Action(LoadVideos)
-  async loadVideos(ctx: StateContext<AppStateModel>) {
-    try {
-      const videos = await this.storageService.getAllVideos();
-      ctx.patchState({ videos });
-    } catch (error) {
-      console.error('Error loading videos:', error);
-      ctx.patchState({ videos: [] });
-    }
-  }
-
-  @Action(SaveVideo)
-  async saveVideo(ctx: StateContext<AppStateModel>, action: SaveVideo) {
-    try {
-      await this.storageService.saveVideo(action.video);
-      const state = ctx.getState();
-      ctx.patchState({
-        videos: [...state.videos, action.video]
-      });
-    } catch (error) {
-      console.error('Error saving video:', error);
-      throw error;
-    }
-  }
-
-  @Action(DeleteVideo)
-  async deleteVideo(ctx: StateContext<AppStateModel>, action: DeleteVideo) {
-    try {
-      await this.storageService.deleteVideo(action.id);
-      const state = ctx.getState();
-      ctx.patchState({
-        videos: state.videos.filter(video => video.id !== action.id)
-      });
-    } catch (error) {
-      console.error('Error deleting video:', error);
-      throw error;
-    }
-  }
-
-  @Action(ClearVideos)
-  async clearVideos(ctx: StateContext<AppStateModel>) {
-    try {
-      await this.storageService.clearAllVideos();
-      ctx.patchState({ videos: [] });
-    } catch (error) {
-      console.error('Error clearing videos:', error);
-      throw error;
-    }
+  static hasRecordedVideos(state: AppStateModel): boolean {
+    return state.videos.length > 0;
   }
 
   @Action(SetQuality)
@@ -157,10 +106,47 @@ export class AppState {
     ctx.patchState({ isSettingsOpen: !state.isSettingsOpen });
   }
 
+  @Action(SaveVideo)
+  async saveVideo(ctx: StateContext<AppStateModel>, action: SaveVideo) {
+    try {
+      await this.storageService.saveVideo(action.video);
+      const state = ctx.getState();
+      ctx.patchState({
+        videos: [...state.videos, action.video]
+      });
+    } catch (error) {
+      console.error('Error saving video:', error);
+      throw error;
+    }
+  }
+
+  @Action(DeleteVideo)
+  async deleteVideo(ctx: StateContext<AppStateModel>, action: DeleteVideo) {
+    try {
+      await this.storageService.deleteVideo(action.id);
+      const state = ctx.getState();
+      ctx.patchState({
+        videos: state.videos.filter(video => video.id !== action.id)
+      });
+    } catch (error) {
+      console.error('Error deleting video:', error);
+      throw error;
+    }
+  }
+
+  @Action(LoadVideos)
+  async loadVideos(ctx: StateContext<AppStateModel>) {
+    try {
+      const videos = await this.storageService.getAllVideos();
+      ctx.patchState({ videos });
+    } catch (error) {
+      console.error('Error loading videos:', error);
+      ctx.patchState({ videos: [] });
+    }
+  }
+
   @Action(ResetRecordingTime)
   resetRecordingTime(ctx: StateContext<AppStateModel>) {
-    ctx.patchState({
-      recordingTime: 0
-    });
+    ctx.patchState({ recordingTime: 0 });
   }
 }

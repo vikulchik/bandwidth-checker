@@ -1,12 +1,5 @@
-import {VideoQuality} from '../../models/quality.model';
-
-export interface SavedVideo {
-  id: string;
-  blobData: ArrayBuffer;
-  timestamp: number;
-  duration: number;
-  quality: string;
-}
+import { VideoQuality } from '../../models/quality.model';
+import { SavedVideo } from '../../models/video.model';
 
 export interface AppStateModel {
   videos: SavedVideo[];
