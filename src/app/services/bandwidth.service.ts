@@ -5,7 +5,7 @@ import { VideoQuality } from '../models/quality.model';
   providedIn: 'root'
 })
 export class BandwidthService {
-  private readonly TEST_FILE_URL = '/assets/test-files/BigBuckBunny_test-file.mp4';
+  private readonly TEST_FILE_URL = '/assets/test-files/test-video.mp4';
   private readonly SAMPLE_SIZE = 2 * 1024 * 1024; // 2MB for test
   private readonly LOW_THRESHOLD = 2; // 2 Mbps
   private readonly HIGH_THRESHOLD = 5; // 5 Mbps
