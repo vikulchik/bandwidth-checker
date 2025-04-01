@@ -25,7 +25,36 @@ describe('BandwidthService', () => {
     fetchSpy = spyOn(window, 'fetch');
   });
 
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
   describe('getRecommendedQuality', () => {
+    it('should return LOW quality for bandwidth < 2 Mbps', () => {
+      const quality = service.getRecommendedQuality(1.5);
+      expect(quality).toBe(VideoQuality.LOW);
+    });
+
+    it('should return MEDIUM quality for bandwidth between 2 and 5 Mbps', () => {
+      const quality = service.getRecommendedQuality(3.5);
+      expect(quality).toBe(VideoQuality.MEDIUM);
+    });
+
+    it('should return HIGH quality for bandwidth > 5 Mbps', () => {
+      const quality = service.getRecommendedQuality(6);
+      expect(quality).toBe(VideoQuality.HIGH);
+    });
+
+    it('should return MEDIUM quality for edge case at 2 Mbps', () => {
+      const quality = service.getRecommendedQuality(2);
+      expect(quality).toBe(VideoQuality.MEDIUM);
+    });
+
+    it('should return MEDIUM quality for edge case at 5 Mbps', () => {
+      const quality = service.getRecommendedQuality(5);
+      expect(quality).toBe(VideoQuality.HIGH);
+    });
+
     it('should return LOW quality for bandwidth < 1 Mbps', () => {
       expect(service.getRecommendedQuality(500000)).toBe(VideoQuality.LOW);
     });
@@ -46,6 +75,37 @@ describe('BandwidthService', () => {
 
     afterEach(() => {
       jasmine.clock().uninstall();
+    });
+
+    it('should measure bandwidth successfully', async () => {
+      const bandwidth = await service.measureBandwidth();
+      expect(bandwidth).toBeGreaterThan(0);
+    });
+
+    it('should throw error for failed measurement', async () => {
+      // Mock fetch to simulate failure
+      spyOn(window, 'fetch').and.returnValue(Promise.reject('Network error'));
+      
+      await expectAsync(service.measureBandwidth()).toBeRejected();
+    });
+
+    it('should calculate bandwidth correctly based on file size and download time', async () => {
+      const mockResponse = new Response(new ArrayBuffer(1000000)); // 1MB file
+      spyOn(window, 'fetch').and.returnValue(Promise.resolve(mockResponse));
+      
+      // Mock performance.now() to simulate 1 second download time
+      const originalNow = performance.now;
+      let callCount = 0;
+      spyOn(performance, 'now').and.callFake(() => {
+        callCount++;
+        return callCount === 1 ? 0 : 1000; // Return 0 first time, 1000 second time
+      });
+
+      const bandwidth = await service.measureBandwidth();
+      expect(bandwidth).toBe(8); // 1MB in 1 second = 8 Mbps
+
+      // Restore original performance.now
+      performance.now = originalNow;
     });
 
     it('should measure bandwidth and set appropriate quality', async () => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SavedVideo } from '../store/models/app.model';
+import { SavedVideo } from '../models/video.model';
 
 @Injectable({
   providedIn: 'root'
