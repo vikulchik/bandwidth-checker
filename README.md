@@ -92,7 +92,7 @@ Storage structure:
 <img width="1125" alt="Снимок экрана 2025-04-01 в 10 55 37" src="https://github.com/user-attachments/assets/2f75d061-afd2-40fe-8875-9a3504543f85" />
 
 ### Delete Dialog
-<img width="1114" alt="Снимок экрана 2025-04-01 в 10 57 51" src="https://github.com/user-attachments/assets/b0b92bf9-faa0-40ab-8a17-ac0253452bf5" />
+<img width="1725" alt="Снимок экрана 2025-04-01 в 15 17 09" src="https://github.com/user-attachments/assets/0467abcf-c0d7-4d84-a21a-03ae9fafeb61" />
 
 ## Error Handling
 
