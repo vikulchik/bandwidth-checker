@@ -4,6 +4,11 @@
   height: 100%;
   padding: 40px;
   box-sizing: border-box;
+
+  @media screen and (max-width: 1024px) {
+    flex-direction: column;
+    padding: 20px;
+  }
 }
 
 .recorded-videos-column,
@@ -28,6 +33,10 @@
 .main-video-column {
   flex: 1;
   min-width: 0;
+
+  @media screen and (max-width: 1024px) {
+    flex: auto;
+  }
 }
 
 .recorded-videos-column {
@@ -85,13 +94,16 @@
   z-index: 2;
 
   .custom-spinner {
-    ::ng-deep {
-      circle {
-        stroke: url(#gradient) !important;
-        stroke-linecap: round;
-        stroke-width: 6px !important;
-      }
-    }
+    animation: rotate 2s linear infinite;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -178,9 +190,14 @@
       transition: background-color 0.2s;
       font-size: 20px;
       color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
 
       @media screen and (max-width: 768px) {
         font-size: 11px;
+      }
+
+      .quality-number {
+        font-weight: 900;
       }
 
       &.selected {
@@ -281,20 +298,5 @@
         transition: width 0.1s linear;
       }
     }
-  }
-}
-
-@media screen and (max-width: 1024px) {
-  .webcam-recorder-container {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .main-video-column {
-    flex: auto;
-  }
-
-  .recorded-videos-column {
-    width: 100%;
   }
 }

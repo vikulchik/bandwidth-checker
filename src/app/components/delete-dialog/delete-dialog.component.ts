@@ -80,7 +80,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     }
 
     .cancel-button:hover {
-      background: #F5F5F5;
+      background: #5061d0;
+      color: white;
     }
 
     .delete-button {

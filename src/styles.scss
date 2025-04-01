@@ -29,7 +29,6 @@ $bandwidth-checker-theme: mat.define-light-theme((color: (primary: $bandwidth-ch
 // that you are using.
 @include mat.all-component-themes($bandwidth-checker-theme);
 
-/* You can add global styles to this file, and also import other style files */
 * {
   margin: 0;
   padding: 0;
@@ -45,12 +44,10 @@ body {
   background-color: #F8F8F8;
 }
 
-// Apply Lato font to Material components
 .mat-typography {
   font-family: 'Lato', sans-serif !important;
 }
 
-// Notification styles
 .error-snackbar {
   background: #f44336 !important;
   color: white !important;
@@ -84,4 +81,61 @@ body {
 
 .cdk-overlay-dark-backdrop {
   background-color: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(12px);
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #323232;
+  --mat-mdc-snack-bar-button-color: #ffffff;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+
+  .mdc-snackbar__surface {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+  }
+
+  .mat-mdc-snack-bar-action {
+    color: #ffffff;
+  }
+
+  .mdc-snackbar__label {
+    padding: 14px 16px;
+  }
+}
+
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #323232;
+  
+  .mdc-snackbar__surface {
+    border-radius: 0 !important;
+    border-left: 4px solid #f44336 !important;
+  }
+}
+
+.mat-mdc-snack-bar-container.warning-snackbar {
+  --mdc-snackbar-container-color: #323232;
+  
+  .mdc-snackbar__surface {
+    border-radius: 0 !important;
+    border-left: 4px solid #ff9800 !important;
+  }
+}
+
+.mat-mdc-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #323232;
+  
+  .mdc-snackbar__surface {
+    border-radius: 0 !important;
+    border-left: 4px solid #4caf50 !important;
+  }
+}
+
+.mdc-snackbar {
+  .mdc-snackbar__surface {
+    &::before,
+    &::after {
+      display: none !important;
+    }
+  }
 }

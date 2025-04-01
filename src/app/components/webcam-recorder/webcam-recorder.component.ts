@@ -43,9 +43,9 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   mediaRecorder: MediaRecorder | null = null;
 
   qualities = [
-    { label: '360p (Low Quality)', value: VideoQuality.LOW },
-    { label: '720p (Medium Quality)', value: VideoQuality.MEDIUM },
-    { label: '1080p (High Quality)', value: VideoQuality.HIGH }
+    { label: { number: '360p', text: '(Low Quality)' }, value: VideoQuality.LOW },
+    { label: { number: '720p', text: '(Medium Quality)' }, value: VideoQuality.MEDIUM },
+    { label: { number: '1080p', text: '(High Quality)' }, value: VideoQuality.HIGH }
   ];
 
   constructor(
@@ -164,6 +164,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
+      panelClass: ['success-snackbar']
     });
   }
 
@@ -389,7 +390,7 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
 
   private getQualityLabel(quality: VideoQuality): string {
     const qualityOption = this.qualities.find(q => q.value === quality);
-    return qualityOption ? qualityOption.label : 'Unknown Quality';
+    return qualityOption ? qualityOption.label.text : 'Unknown Quality';
   }
 
   private stopWebcam() {

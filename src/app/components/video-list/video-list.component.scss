@@ -31,6 +31,26 @@
   overflow: hidden;
   margin-bottom: 12px;
   height: 180px;
+  cursor: pointer;
+  
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: linear-gradient(to top, 
+      rgba(0, 0, 0, 0.3) 50%,
+      transparent 50%
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, background 0.3s ease;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -54,8 +74,13 @@
   }
 
   &:hover {
-    .delete-button {
+    &::after {
       opacity: 1;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .delete-button {
+      display: block;
     }
   }
 
@@ -79,6 +104,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+  z-index: 2;
 }
 
 .delete-button {
@@ -91,11 +117,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-
+  display: none;
+  z-index: 2;
+  
   @media screen and (max-width: 768px) {
-    opacity: 1;
+    display: block;
   }
 }
 
@@ -121,7 +147,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,6 +163,133 @@
   video {
     width: 100%;
     border-radius: 12px;
+  }
+
+  .video-controls {
+    position: absolute;
+    width: 544px;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: 0;
+    background:  rgba(0, 0, 0, 0.5);
+    padding: 10px 12px;
+    gap: 24px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media screen and (max-width: 768px) {
+      width: 80%;
+      padding: 6px 9px;
+      gap: 12px;
+      bottom: 12px;
+    }
+
+    .progress-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+
+      @media screen and (max-width: 768px) {
+        gap: 10px;
+      }
+
+      .time-display {
+        color: white;
+        font-size: 14px;
+
+        @media screen and (max-width: 768px) {
+         font-size: 10px;
+        }
+      }
+
+      .progress-section {
+        flex: 1;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        cursor: pointer;
+        position: relative;
+        overflow: visible;
+        
+        .progress-bar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background: #ffffff;
+          border-radius: 2px;
+        }
+        
+        .progress-handle {
+          position: absolute;
+          width: 8px;
+          height: 24px;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          background: white;
+          border-radius: 4px;
+          z-index: 10;
+          pointer-events: none;
+          will-change: left;
+
+          @media screen and (max-width: 768px) {
+            width: 6px;
+            height: 16px;
+          }    
+        }
+        
+        &:hover {
+          .progress-handle {
+            transform: translate(-50%, -50%) scale(1.2);
+          }
+        }
+      }
+    }
+
+    .play-pause-button {
+      width: 60px;
+      height: 60px;
+      background: #5061D0;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      @media screen and (max-width: 768px) {
+        width: 30px;
+        height: 30px;
+      }
+
+      &:hover {
+        background: #6574E2;
+      }
+
+      svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+
+        @media screen and (max-width: 768px) {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    .time-display {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
   }
 }
 
@@ -153,8 +307,18 @@
   align-items: center;
   justify-content: center;
 
+  @media screen and (max-width: 768px) {
+    width: 24px;
+    height: 24px;
+  }
+
   svg {
     color: white;
+
+    @media screen and (max-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &:hover {

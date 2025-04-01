@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { AppState } from '../../store/state/app.state';
 import { Observable } from 'rxjs';
@@ -15,9 +15,15 @@ import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component'
 export class VideoListComponent implements OnDestroy {
   @Select(AppState.videos) videos$!: Observable<SavedVideo[]>;
   @Select(AppState.hasRecordedVideos) hasRecordedVideos$!: Observable<boolean>;
+  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
   private videoUrlCache = new Map<string, string>();
   selectedVideo: (SavedVideo & { url: string }) | null = null;
+
+  isPlaying = false;
+  progress = 0;
+  currentTime = 0;
+  duration = 0;
 
   constructor(
     private store: Store,
@@ -73,10 +79,56 @@ export class VideoListComponent implements OnDestroy {
   playVideo(video: SavedVideo): void {
     const url = this.getVideoUrl(video);
     this.selectedVideo = { ...video, url };
+    this.duration = video.duration;
   }
 
   closeVideo(): void {
+    if (this.videoPlayer && this.isPlaying) {
+      this.videoPlayer.nativeElement.pause();
+    }
     this.selectedVideo = null;
+    this.isPlaying = false;
+    this.currentTime = 0;
+    this.progress = 0;
+  }
+
+  onTimeUpdate(event: Event) {
+    const video = event.target as HTMLVideoElement;
+    this.currentTime = Math.floor(video.currentTime);
+    
+    if (this.duration > 0 && isFinite(this.duration)) {
+      let calculated = (video.currentTime / this.duration) * 100;
+      // Ограничиваем значение прогресса между 0 и 100
+      this.progress = Math.min(100, Math.max(0, calculated));
+    }
+  }
+
+  togglePlay() {
+    if (this.videoPlayer) {
+      if (this.isPlaying) {
+        this.videoPlayer.nativeElement.pause();
+      } else {
+        this.videoPlayer.nativeElement.play();
+      }
+      this.isPlaying = !this.isPlaying;
+    }
+  }
+
+  onProgressClick(event: MouseEvent) {
+    if (this.videoPlayer && this.duration > 0 && isFinite(this.duration)) {
+      const progressBar = event.currentTarget as HTMLElement;
+      const rect = progressBar.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const percentage = x / rect.width;
+      this.videoPlayer.nativeElement.currentTime = percentage * this.duration;
+    } else {
+    }
+  }
+
+  onVideoEnded() {
+    // Когда видео закончилось, обновляем состояние на "не воспроизводится"
+    this.isPlaying = false;
+    console.log('Video playback ended');
   }
 
   ngOnDestroy(): void {

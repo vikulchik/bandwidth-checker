@@ -11,6 +11,7 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
 import { AppState } from './store/state/app.state';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DurationPipe } from './pipes/duration.pipe';
+import { TimePipe } from './pipes/time.pipe';
 
 // Material Imports
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +25,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     WebcamRecorderComponent,
     VideoListComponent,
     DeleteDialogComponent,
-    DurationPipe
+    DurationPipe,
+    TimePipe
   ],
   imports: [
     BrowserModule,
