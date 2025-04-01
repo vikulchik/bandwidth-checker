@@ -1,4 +1,5 @@
 # Bandwidth Checker and Video Recorder
+[bandwidth-checker](https://vikulchik.github.io/bandwidth-checker/)
 
 An application for checking internet bandwidth and recording webcam video with automatic quality selection.
 
