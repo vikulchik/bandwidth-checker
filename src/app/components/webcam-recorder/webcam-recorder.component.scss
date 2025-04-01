@@ -78,17 +78,20 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  z-index: 2;
 
-  .measuring-text {
-    color: white;
-    font-size: 14px;
-    margin: 0;
+  .custom-spinner {
+    ::ng-deep {
+      circle {
+        stroke: url(#gradient) !important;
+        stroke-linecap: round;
+        stroke-width: 6px !important;
+      }
+    }
   }
 }
 

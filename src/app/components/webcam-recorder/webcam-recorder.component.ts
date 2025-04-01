@@ -16,6 +16,7 @@ import {
   LoadVideos,
   ResetRecordingTime
 } from '../../store/actions/app.actions';
+import { SavedVideo } from '../../models/video.model';
 
 @Component({
   selector: 'app-webcam-recorder',
@@ -66,6 +67,9 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   private async initializeWithErrorHandling() {
     try {
       await this.measureBandwidthAndSetQuality();
+      // Initialize camera after bandwidth measurement
+      console.log('Initializing webcam after bandwidth measurement');
+      await this.initializeWebcam();
     } catch (error) {
       this.handleInitializationError(error);
     }
@@ -128,7 +132,22 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   private handleInitializationError(error: any) {
     console.error('Initialization error:', error);
     this.store.dispatch(new SetQuality(this.DEFAULT_QUALITY));
-    this.showError('Failed to initialize the application. Video quality set to medium.');
+
+    // Determine the type of error for more accurate user message
+    let errorMessage = 'Failed to initialize the application. ';
+
+    if (error instanceof Error) {
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage += 'Please allow access to the camera and microphone. ';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage += 'Camera or microphone not found. ';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage += 'The camera or microphone is already in use by another application. ';
+      }
+    }
+
+    errorMessage += 'Video quality set to medium.';
+    this.showError(errorMessage);
   }
 
   private showBandwidthMessage(bandwidth: number, quality: VideoQuality) {
@@ -277,7 +296,9 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
   }
 
   async toggleRecording() {
-    if (this.store.selectSnapshot(AppState.isRecording)) {
+    const isRecording = this.store.selectSnapshot(AppState.isRecording);
+
+    if (isRecording) {
       this.stopRecording();
       console.log('stopRecording');
     } else {
@@ -286,7 +307,24 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
         const initialized = await this.initializeWebcam();
         if (!initialized) return;
       }
-      this.startRecording();
+
+      if (this.mediaRecorder) {
+        // Start recording
+        this.store.dispatch(new StartRecording());
+        this.startTimer();
+
+        this.chunks = [];
+        this.mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.chunks.push(event.data);
+          }
+        };
+
+        this.mediaRecorder.start(1000); // Get data every second
+        console.log('Started recording');
+      } else {
+        this.showError('MediaRecorder not initialized properly');
+      }
     }
   }
 
@@ -302,23 +340,17 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
           const arrayBuffer = await blob.arrayBuffer();
           const currentQuality = this.store.selectSnapshot(AppState.currentQuality);
 
-          const videoData = {
+          const videoData: SavedVideo = {
             id: Date.now().toString(),
             blobData: arrayBuffer,
             timestamp: Date.now(),
             duration: finalRecordingTime,
-            quality: this.getQualityLabel(currentQuality)
+            quality: currentQuality
           };
 
           console.log('Saving video with duration:', finalRecordingTime);
           await this.store.dispatch(new SaveVideo(videoData)).toPromise();
           this.chunks = [];
-
-          // Stop the webcam after saving the video
-          this.stopWebcam();
-          if (this.videoElement) {
-            this.videoElement.nativeElement.srcObject = null;
-          }
         } catch (error) {
           console.error('Error saving video:', error);
           this.showError('There was an error saving the video');
@@ -329,30 +361,8 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       this.mediaRecorder.stop();
       this.store.dispatch(new StopRecording());
       this.clearTimer();
+      this.store.dispatch(new ResetRecordingTime());
     }
-  }
-
-  private startRecording(): void {
-    if (!this.mediaRecorder) {
-      console.error('MediaRecorder is not initialized');
-      return;
-    }
-
-    // Reset recording time and start timer
-    this.store.dispatch(new ResetRecordingTime());
-    this.startTimer();
-
-    // Start recording
-    this.chunks = [];
-    this.mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        this.chunks.push(e.data);
-      }
-    };
-
-    this.store.dispatch(new StartRecording());
-    this.mediaRecorder.start();
-    console.log('Recording started');
   }
 
   private startTimer(): void {
@@ -362,6 +372,10 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
 
     this.timer = setInterval(() => {
       const currentTime = this.store.selectSnapshot(AppState.recordingTime);
+      if (currentTime >= this.MAX_RECORDING_TIME) {
+        this.stopRecording();
+        return;
+      }
       this.store.dispatch(new UpdateRecordingTime(currentTime + 1));
     }, 1000);
   }
@@ -385,6 +399,39 @@ export class WebcamRecorderComponent implements OnInit, OnDestroy {
       });
       this.mediaStream = null;
       this.mediaRecorder = null;
+    }
+  }
+
+  private getVideoBitrate(): number {
+    const quality = this.store.selectSnapshot(state => state.app.quality) as VideoQuality;
+    switch (quality) {
+      case VideoQuality.LOW:
+        return 500000; // 500 kbps
+      case VideoQuality.MEDIUM:
+        return 1500000; // 1.5 Mbps
+      case VideoQuality.HIGH:
+        return 3000000; // 3 Mbps
+      default:
+        return 1500000;
+    }
+  }
+
+  private async saveVideo(blob: Blob) {
+    try {
+      const arrayBuffer = await blob.arrayBuffer();
+      const video: SavedVideo = {
+        id: Date.now().toString(),
+        blobData: arrayBuffer,
+        timestamp: Date.now(),
+        duration: this.store.selectSnapshot(AppState.recordingTime),
+        quality: this.store.selectSnapshot(state => state.app.quality) as VideoQuality
+      };
+
+      this.store.dispatch(new SaveVideo(video));
+      this.snackBar.open('Video saved successfully', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Error saving video:', error);
+      this.snackBar.open('Error saving video', 'Close', { duration: 3000 });
     }
   }
 }

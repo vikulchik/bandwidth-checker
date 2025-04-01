@@ -4,11 +4,19 @@
       <video #videoElement class="main-video"></video>
 
       <div class="bandwidth-overlay" *ngIf="isMeasuringBandwidth">
-        <mat-spinner diameter="48"></mat-spinner>
-        <p class="measuring-text">Measuring connection speed...</p>
+        <svg width="0" height="0">
+          <defs>
+            <linearGradient id="gradient" gradientTransform="rotate(90)">
+              <stop offset="0%" stop-color="#808080" />
+              <stop offset="100%" stop-color="#E0E0E0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <mat-progress-spinner mode="indeterminate" diameter="100" strokeWidth="6" class="custom-spinner">
+        </mat-progress-spinner>
       </div>
 
-      <div class="controls">
+      <div class="controls" *ngIf="!isMeasuringBandwidth">
         <button class="settings-button" (click)="toggleSettings()">
           <svg *ngIf="!(isSettingsOpen$ | async)" width="40" height="40" viewBox="0 0 40 40" fill="none"
             xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +70,7 @@
   </div>
 
   <div class="recorded-videos-column">
-    <div class="videos-list">
+    <div class="videos-list" *ngIf="!isMeasuringBandwidth">
       <div class="empty-state" *ngIf="!(hasRecordedVideos$ | async)">
         <svg width="34" height="23" viewBox="0 0 34 23" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
