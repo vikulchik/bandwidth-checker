@@ -83,7 +83,7 @@ Storage structure:
 ## Screenshots
 
 ### Initial Screen
-<img width="1063" alt="Снимок экрана 2025-04-01 в 11 13 08" src="https://github.com/user-attachments/assets/865f100d-3998-4fb0-a794-3c7fe05afc15" />
+<img width="1400" alt="Снимок экрана 2025-04-01 в 14 37 54" src="https://github.com/user-attachments/assets/46d6c253-5ccd-4b36-b64f-1c3da9debd25" />
 
 ### Recording Screen
 <img width="1154" alt="Снимок экрана 2025-04-01 в 10 34 54" src="https://github.com/user-attachments/assets/e00d9f18-23ad-4e56-b546-f44b0f23c1d0" />
